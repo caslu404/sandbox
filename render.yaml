@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: sandbox-ideias
-    env: static
-    staticPublishPath: .
-    headers:
-      - path: /*
-        name: Cache-Control
-        value: no-cache
