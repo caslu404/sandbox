@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sandbox</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- STICKY HEADER WRAPPER -->
+  <div class="sticky-top">
+
+    <!-- PAGE HEADER -->
+    <header class="page-header">
+      <h1 class="logo">Sandbox</h1>
+      <div class="stats" id="stats"></div>
+      <div class="header-actions">
+        <button class="hdr-btn" id="filter-toggle-btn" onclick="toggleFilters()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="1" y1="3.5" x2="13" y2="3.5"/>
+            <line x1="3" y1="7" x2="11" y2="7"/>
+            <line x1="5" y1="10.5" x2="9" y2="10.5"/>
+          </svg>
+          Filtros
+          <span class="filter-count hidden" id="filter-count">0</span>
+        </button>
+        <button class="hdr-btn" onclick="openTagsModal()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7.5 1.5H12.5V6.5L7 12a1 1 0 01-1.4 0L1.5 7.9A1 1 0 011.5 6.5L7.5 1.5z"/>
+            <circle cx="10" cy="4" r="0.8" fill="currentColor" stroke="none"/>
+          </svg>
+          Tags
+        </button>
+      </div>
+    </header>
+
+    <!-- COLUMN LABELS (sticky, aligned to board grid) -->
+    <div class="col-labels">
+      <div class="col-label">
+        <span class="col-dot col-dot-edit" id="col-dot-sandbox" style="background:var(--c-sandbox)"
+          onclick="toggleColColorPicker(event,'sandbox')" title="Mudar cor da coluna"></span>
+        <span class="col-name">Sandbox</span>
+        <span class="col-count" id="count-sandbox">0</span>
+      </div>
+      <div class="col-label">
+        <span class="col-dot col-dot-edit" id="col-dot-dev" style="background:var(--c-dev)"
+          onclick="toggleColColorPicker(event,'dev')" title="Mudar cor da coluna"></span>
+        <span class="col-name">Em Desenvolvimento</span>
+        <span class="col-count" id="count-dev">0</span>
+      </div>
+      <div class="col-label">
+        <span class="col-dot col-dot-edit" id="col-dot-finalizada" style="background:var(--c-done)"
+          onclick="toggleColColorPicker(event,'finalizada')" title="Mudar cor da coluna"></span>
+        <span class="col-name">Finalizada</span>
+        <span class="col-count" id="count-finalizada">0</span>
+      </div>
+      <div class="col-label">
+        <span class="col-dot col-dot-edit" id="col-dot-descartada" style="background:var(--c-disc)"
+          onclick="toggleColColorPicker(event,'descartada')" title="Mudar cor da coluna"></span>
+        <span class="col-name">Descartada</span>
+        <span class="col-count" id="count-descartada">0</span>
+      </div>
+    </div>
+
+    <!-- FILTER BAR (hidden by default) -->
+    <div class="filter-wrap hidden" id="filter-wrap">
+      <div class="filter-bar" id="filter-bar">
+        <button class="f-chip f-chip--all active" onclick="clearFilters()">Todas</button>
+      </div>
+    </div>
+
+  </div><!-- /sticky-top -->
+
+  <!-- BOARD (columns no longer have headers — they're in sticky-top above) -->
+  <div class="board">
+
+    <div class="column">
+      <div class="col-body" id="col-sandbox" data-status="sandbox"></div>
+      <button class="col-add" onclick="openModal('sandbox')" title="Adicionar ideia">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="7.5" y1="1" x2="7.5" y2="14"/><line x1="1" y1="7.5" x2="14" y2="7.5"/></svg>
+      </button>
+    </div>
+
+    <div class="column">
+      <div class="col-body" id="col-dev" data-status="dev"></div>
+      <button class="col-add" onclick="openModal('dev')" title="Adicionar ideia">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="7.5" y1="1" x2="7.5" y2="14"/><line x1="1" y1="7.5" x2="14" y2="7.5"/></svg>
+      </button>
+    </div>
+
+    <div class="column">
+      <div class="col-body" id="col-finalizada" data-status="finalizada"></div>
+      <button class="col-add" onclick="openModal('finalizada')" title="Adicionar ideia">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="7.5" y1="1" x2="7.5" y2="14"/><line x1="1" y1="7.5" x2="14" y2="7.5"/></svg>
+      </button>
+    </div>
+
+    <div class="column">
+      <div class="col-body" id="col-descartada" data-status="descartada"></div>
+      <button class="col-add" onclick="openModal('descartada')" title="Adicionar ideia">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="7.5" y1="1" x2="7.5" y2="14"/><line x1="1" y1="7.5" x2="14" y2="7.5"/></svg>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- IDEA MODAL -->
+<div class="overlay hidden" id="overlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modal-title">Nova ideia</h2>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="2" x2="14" y2="14"/><line x1="14" y1="2" x2="2" y2="14"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label for="f-titulo">Título</label>
+        <input type="text" id="f-titulo" placeholder="Nome da ideia" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label for="f-desc">Descrição</label>
+        <textarea id="f-desc" placeholder="Descreve livremente — observação, hipótese, inspiração..."></textarea>
+      </div>
+      <div class="field">
+        <label>Tags</label>
+        <div class="tags-picker-wrap">
+          <div class="tags-picker" id="tags-picker"></div>
+          <div class="tags-add-row">
+            <input type="text" id="f-tag-new" placeholder="+ criar nova tag" autocomplete="off" />
+          </div>
+        </div>
+        <input type="hidden" id="f-tags" value="" />
+      </div>
+      <div class="pickers-row">
+        <div class="picker-group">
+          <label>Complexidade</label>
+          <div class="dot-picker" id="pick-cx" data-val="0" data-type="cx">
+            <button type="button" class="dp" data-n="1"></button>
+            <button type="button" class="dp" data-n="2"></button>
+            <button type="button" class="dp" data-n="3"></button>
+            <span class="dp-lbl" id="lbl-cx">—</span>
+          </div>
+        </div>
+        <div class="picker-group">
+          <label>Impacto</label>
+          <div class="dot-picker" id="pick-im" data-val="0" data-type="im">
+            <button type="button" class="dp" data-n="1"></button>
+            <button type="button" class="dp" data-n="2"></button>
+            <button type="button" class="dp" data-n="3"></button>
+            <span class="dp-lbl" id="lbl-im">—</span>
+          </div>
+        </div>
+      </div>
+      <!-- hidden status field — set programmatically -->
+      <input type="hidden" id="f-status" value="sandbox" />
+    </div>
+    <div class="modal-foot">
+      <div class="spacer"></div>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveIdeia()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TAGS MODAL -->
+<div class="overlay hidden" id="tags-overlay" onclick="handleTagsOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Gerenciar Tags</h2>
+      <button class="modal-close" onclick="closeTagsModal()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="2" x2="14" y2="14"/><line x1="14" y1="2" x2="2" y2="14"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- Add new tag form -->
+      <div class="add-tag-row">
+        <input type="text" id="new-tag-input" class="add-tag-input"
+          placeholder="Nome da nova tag..." autocomplete="off"
+          onkeydown="if(event.key==='Enter') addNewTag()" />
+        <button class="btn btn-primary" onclick="addNewTag()">Adicionar</button>
+      </div>
+      <!-- Tag list -->
+      <div id="tags-list"></div>
+    </div>
+    <div class="modal-foot">
+      <div class="spacer"></div>
+      <button class="btn btn-primary" onclick="closeTagsModal()">Feito</button>
+    </div>
+  </div>
+</div>
+
+<!-- HAND-DRAWN CONFIRM — overlay handles centering (same pattern as modals, immune to zoom) -->
+<div class="hd-overlay hidden" id="hd-overlay" onclick="handleHdOverlayClick(event)">
+  <div class="hd-confirm" id="hd-confirm">
+    <p class="hd-confirm-msg">Excluir essa ideia?</p>
+    <div class="hd-confirm-btns">
+      <button class="hd-btn hd-btn-yes" id="hd-confirm-yes">Sim, excluir</button>
+      <button class="hd-btn hd-btn-no" onclick="closeHdConfirm()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- UNDO TOAST -->
+<div class="undo-toast hidden" id="undo-toast">
+  <span class="undo-msg">Ideia excluída</span>
+  <button class="undo-btn" onclick="undoDelete()">Desfazer</button>
+  <div class="undo-bar" id="undo-bar"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
