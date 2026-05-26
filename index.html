@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Sandbox">
+  <title>Sandbox</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <span class="header-brand">Sandbox</span>
+    <div class="header-actions">
+      <div class="stats" id="stats"></div>
+      <button class="btn-icon" onclick="exportData()" title="Exportar JSON">↓</button>
+      <label class="btn-icon" title="Importar JSON">
+        ↑<input type="file" accept=".json" onchange="importData(event)" style="display:none">
+      </label>
+    </div>
+  </header>
+
+  <!-- QUICK ADD -->
+  <div class="quick-add-wrap">
+    <div class="quick-add" id="quick-add-box">
+      <span class="quick-icon">+</span>
+      <input
+        type="text"
+        id="quick-input"
+        class="quick-input"
+        placeholder="O que está na sua cabeça? Use #tags para categorizar"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <kbd class="quick-hint">↵ para adicionar</kbd>
+    </div>
+  </div>
+
+  <!-- BOARD -->
+  <main class="board">
+    <div class="column">
+      <div class="col-header">
+        <span class="col-dot" style="background:var(--c-sandbox)"></span>
+        <span class="col-name">Sandbox</span>
+        <span class="col-count" id="count-sandbox">0</span>
+      </div>
+      <div class="col-body" id="col-sandbox" data-status="sandbox"></div>
+    </div>
+    <div class="column">
+      <div class="col-header">
+        <span class="col-dot" style="background:var(--c-dev)"></span>
+        <span class="col-name">Em Desenvolvimento</span>
+        <span class="col-count" id="count-dev">0</span>
+      </div>
+      <div class="col-body" id="col-dev" data-status="dev"></div>
+    </div>
+    <div class="column">
+      <div class="col-header">
+        <span class="col-dot" style="background:var(--c-done)"></span>
+        <span class="col-name">Finalizada</span>
+        <span class="col-count" id="count-finalizada">0</span>
+      </div>
+      <div class="col-body" id="col-finalizada" data-status="finalizada"></div>
+    </div>
+    <div class="column">
+      <div class="col-header">
+        <span class="col-dot" style="background:var(--c-disc)"></span>
+        <span class="col-name">Descartada</span>
+        <span class="col-count" id="count-descartada">0</span>
+      </div>
+      <div class="col-body" id="col-descartada" data-status="descartada"></div>
+    </div>
+  </main>
+
+  <!-- MODAL -->
+  <div class="overlay hidden" id="overlay" onclick="closeModalOutside(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Nova ideia</h2>
+        <button class="modal-close" onclick="closeModal()" aria-label="Fechar">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label for="f-titulo">Título</label>
+          <input type="text" id="f-titulo" placeholder="Nome da ideia" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="f-descricao">Descrição livre</label>
+          <textarea id="f-descricao" placeholder="Escreve livremente — observação, hipótese, inspiração. Sem pressão de formato."></textarea>
+        </div>
+        <div class="field">
+          <label for="f-tags">Tags</label>
+          <input type="text" id="f-tags" placeholder="AI, Sales, Quick Win" autocomplete="off" />
+          <span class="field-hint">Separe por vírgula — ou use #hashtag diretamente no título na barra rápida</span>
+        </div>
+        <div class="field">
+          <label for="f-status">Coluna</label>
+          <select id="f-status" onchange="onStatusChange()">
+            <option value="sandbox">Sandbox</option>
+            <option value="dev">Em Desenvolvimento</option>
+            <option value="finalizada">Finalizada</option>
+            <option value="descartada">Descartada</option>
+          </select>
+        </div>
+        <div id="extra-fields" class="extra-section hidden">
+          <div class="section-sep">Mais detalhes</div>
+          <div class="field">
+            <label for="f-problema">Problema que resolve</label>
+            <textarea id="f-problema" placeholder="Qual dor ou ineficiência isso ataca?"></textarea>
+          </div>
+          <div class="field">
+            <label for="f-quem">Quem se beneficia</label>
+            <input type="text" id="f-quem" placeholder="Time de Sales, lojistas Mid Market..." />
+          </div>
+          <div class="field">
+            <label for="f-proximo">Próximo passo</label>
+            <input type="text" id="f-proximo" placeholder="Ação concreta mais próxima" />
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="f-cx">Complexidade</label>
+              <select id="f-cx">
+                <option value="">—</option>
+                <option value="P">P — Pequena</option>
+                <option value="M">M — Média</option>
+                <option value="G">G — Grande</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-im">Impacto</label>
+              <select id="f-im">
+                <option value="">—</option>
+                <option value="P">P — Baixo</option>
+                <option value="M">M — Médio</option>
+                <option value="G">G — Alto</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost btn-danger-ghost hidden" id="btn-delete" onclick="deleteIdeia()">Excluir</button>
+        <div class="spacer"></div>
+        <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveIdeia()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTEXT MENU -->
+  <div class="ctx-menu hidden" id="ctx-menu"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
