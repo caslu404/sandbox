@@ -905,7 +905,9 @@ document.addEventListener('keydown', e => {
 
 /* ── SEED ── */
 function seedIfEmpty() {
-  if (ideias.length) return;
+  // Only seed on the very first load — if the key already exists (even as []),
+  // the user's state is intentional and must not be overwritten.
+  if (localStorage.getItem(K_IDEAS) !== null) return;
   ideias = [
     {
       id: genId(), status: 'sandbox', sortOrder: 0,
